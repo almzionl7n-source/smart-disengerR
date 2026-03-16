@@ -1,275 +1,292 @@
-/* SMART DESIGNER PRO - MASTER STYLESHEET */
+/* ==============================================
+   SMART DESIGNER PRO · BLACK MARBLE EDITION
+   GPU-Accelerated · Glassmorphism · Obsidian
+   ============================================== */
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* ---------- Design Token System ---------- */
 :root {
-    --bg-black: #050505;
-    --panel-bg: #0d0d0d;
-    --accent-marble: #f5f5f7; /* أبيض رخامي بلمسة رمادية */
-    --accent-blue: #3b82f6;
-    --border-color: rgba(255, 255, 255, 0.05);
-    --text-main: #e5e7eb;
-    --text-dim: #6b7280;
-    --transition-fast: 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+    --obsidian-950: #0a0a0f;
+    --obsidian-900: #12121a;
+    --obsidian-800: #1a1a24;
+    --glass-edge: rgba(255, 255, 255, 0.03);
+    --glass-highlight: rgba(255, 255, 255, 0.02);
+    --indigo-glow: rgba(99, 102, 241, 0.15);
+    --amber-glow: rgba(245, 158, 11, 0.1);
+    --grid-size: 30px;
 }
 
-* {
-    margin: 0;
-    padding: 0;
-    box-sizing: border-box;
-}
-
+/* ---------- Base Layer ---------- */
 body {
-    font-family: 'Tajawal', sans-serif;
-    background-color: var(--bg-black);
-    color: var(--text-main);
+    background-color: var(--obsidian-950);
+    font-family: 'Inter', sans-serif;
     overflow: hidden;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
 }
 
-/* --- Header Section --- */
-.main-header {
-    height: 65px;
-    background: var(--panel-bg);
-    border-bottom: 1px solid var(--border-color);
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    padding: 0 25px;
-    z-index: 1000;
+/* ---------- Infinite Grid Background (GPU Optimized) ---------- */
+.bg-grid-pattern {
+    background-image: 
+        linear-gradient(rgba(255, 255, 255, 0.02) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(255, 255, 255, 0.02) 1px, transparent 1px);
+    background-size: var(--grid-size) var(--grid-size);
+    transform: translateZ(0);
+    backface-visibility: hidden;
+    perspective: 1000;
+    will-change: transform;
 }
 
-.logo-section {
-    display: flex;
-    align-items: center;
-    gap: 15px;
+@keyframes slowDrift {
+    0% { transform: translate(0, 0); }
+    100% { transform: translate(10px, 10px); }
 }
 
-.engine-logo {
-    width: 38px;
-    height: 38px;
-    background: var(--accent-marble);
-    border-radius: 10px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    color: black;
-    font-size: 1.2rem;
-    box-shadow: 0 0 20px rgba(255,255,255,0.1);
+.animate-slow-drift {
+    animation: slowDrift 30s linear infinite alternate;
 }
 
-.brand-main {
-    font-family: 'Orbitron', sans-serif;
-    font-weight: 900;
-    letter-spacing: -1px;
-    font-size: 1.2rem;
+/* ---------- Advanced Glassmorphism System ---------- */
+.glass-panel {
+    background: rgba(10, 10, 15, 0.6);
+    backdrop-filter: blur(12px) saturate(180%);
+    -webkit-backdrop-filter: blur(12px) saturate(180%);
+    border: 1px solid var(--glass-edge);
+    border-top: 1px solid var(--glass-highlight);
+    box-shadow: 0 20px 40px -15px rgba(0, 0, 0, 0.7);
 }
 
-.brand-sub {
-    color: var(--text-dim);
-    font-size: 0.8rem;
-    font-weight: bold;
+.glass-panel-intense {
+    background: rgba(5, 5, 8, 0.8);
+    backdrop-filter: blur(20px) saturate(200%);
+    -webkit-backdrop-filter: blur(20px) saturate(200%);
+    border: 1px solid rgba(255, 255, 255, 0.03);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.02);
 }
 
-/* --- Layout Grid --- */
-.studio-container {
-    display: grid;
-    grid-template-columns: 80px 320px 1fr 300px;
-    height: calc(100vh - 65px);
+/* ---------- Custom Scrollbar (Obsidian Themed) ---------- */
+.custom-scrollbar::-webkit-scrollbar {
+    width: 4px;
 }
 
-/* --- Column 1: Toolbar --- */
-.main-toolbar {
-    background: #000;
-    border-left: 1px solid var(--border-color);
-    display: flex;
-    flex-direction: column;
-    justify-content: space-between;
-    padding: 20px 0;
-}
-
-.tool-nav {
-    display: flex;
-    flex-direction: column;
-    gap: 10px;
-}
-
-.nav-item {
-    width: 100%;
-    padding: 15px 0;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 8px;
-    color: var(--text-dim);
-    border-left: 3px solid transparent;
-    transition: var(--transition-fast);
+.custom-scrollbar::-webkit-scrollbar-track {
     background: transparent;
-    border-right: none;
-    cursor: pointer;
 }
 
-.nav-item i { font-size: 1.3rem; }
-.nav-item span { font-size: 0.65rem; font-weight: bold; text-transform: uppercase; }
-
-.nav-item:hover, .nav-item.active {
-    color: var(--accent-marble);
-    background: rgba(255,255,255,0.03);
+.custom-scrollbar::-webkit-scrollbar-thumb {
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 20px;
 }
 
-.nav-item.active {
-    border-left-color: var(--accent-marble);
+.custom-scrollbar::-webkit-scrollbar-thumb:hover {
+    background: rgba(255, 255, 255, 0.2);
 }
 
-/* --- Column 2: Control Panel --- */
-.control-panel {
-    background: var(--panel-bg);
-    border-left: 1px solid var(--border-color);
-    padding: 30px;
-    overflow-y: auto;
+/* ---------- Layer Tree Visual Depth ---------- */
+.layer-group .layer-group {
+    @apply ml-3 pl-2 border-l border-white/5;
 }
 
-.panel-header {
-    font-size: 0.7rem;
-    text-transform: uppercase;
-    letter-spacing: 3px;
-    color: var(--text-dim);
-    margin-bottom: 25px;
-    border-bottom: 1px solid var(--border-color);
-    padding-bottom: 10px;
-}
-
-.ai-box textarea {
-    width: 100%;
-    background: #000;
-    border: 1px solid var(--border-color);
-    border-radius: 12px;
-    padding: 15px;
-    color: white;
-    font-size: 0.85rem;
-    resize: none;
-    height: 120px;
-    margin-bottom: 15px;
-    outline: none;
-    transition: var(--transition-fast);
-}
-
-.ai-box textarea:focus {
-    border-color: var(--accent-marble);
-}
-
-.ai-execute {
-    width: 100%;
-    background: var(--accent-marble);
-    color: black;
-    padding: 15px;
-    border-radius: 12px;
-    font-weight: 900;
-    font-size: 0.8rem;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 10px;
-    cursor: pointer;
-    transition: var(--transition-fast);
-}
-
-.ai-execute:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 10px 20px rgba(0,0,0,0.3);
-}
-
-/* --- Column 3: Canvas Viewport --- */
-.canvas-viewport {
-    background: #0f0f0f;
-    display: flex;
-    flex-direction: column;
+/* ---------- Tool Icons with Glow Effects ---------- */
+.tool-icon {
     position: relative;
-    background-image: radial-gradient(#222 1px, transparent 1px);
-    background-size: 40px 40px;
+    transition: all 0.15s ease;
 }
 
-.canvas-inner {
-    flex: 1;
-    display: flex;
+.tool-icon::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    border-radius: 0.75rem;
+    padding: 1px;
+    background: linear-gradient(145deg, rgba(255,255,255,0.05), transparent);
+    -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+    -webkit-mask-composite: xor;
+    mask-composite: exclude;
+    pointer-events: none;
+    opacity: 0;
+    transition: opacity 0.2s;
+}
+
+.tool-icon:hover::after {
+    opacity: 1;
+}
+
+/* ---------- Canvas Container with Inner Glow ---------- */
+#canvas-container {
+    position: relative;
+    box-shadow: 
+        0 30px 60px -20px rgba(0, 0, 0, 0.8),
+        inset 0 0 0 1px rgba(255, 255, 255, 0.02);
+    transform: translateZ(0);
+    backface-visibility: hidden;
+}
+
+#canvas-container::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    border-radius: inherit;
+    padding: 1px;
+    background: linear-gradient(145deg, rgba(255,255,255,0.05), rgba(255,255,255,0.001));
+    -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+    -webkit-mask-composite: xor;
+    mask-composite: exclude;
+    pointer-events: none;
+}
+
+/* ---------- Floating HUD Animations ---------- */
+@keyframes floatHud {
+    0% { transform: translateY(0); }
+    100% { transform: translateY(-3px); }
+}
+
+.floating-hud {
+    animation: floatHud 3s ease-in-out infinite alternate;
+}
+
+/* ---------- Ruler Markings (Generated) ---------- */
+.ruler-markings {
+    background: repeating-linear-gradient(
+        90deg,
+        transparent,
+        transparent 9px,
+        rgba(255, 255, 255, 0.02) 9px,
+        rgba(255, 255, 255, 0.02) 10px
+    );
+}
+
+/* ---------- Snapping Guide Visuals ---------- */
+.smart-guide {
+    position: absolute;
+    background: rgba(99, 102, 241, 0.3);
+    box-shadow: 0 0 0 1px rgba(99, 102, 241, 0.5);
+    pointer-events: none;
+    z-index: 1000;
+    transition: opacity 0.1s ease;
+}
+
+.smart-guide.horizontal {
+    height: 1px;
+    width: 100%;
+    transform: translateY(-50%);
+}
+
+.smart-guide.vertical {
+    width: 1px;
+    height: 100%;
+    transform: translateX(-50%);
+}
+
+/* ---------- GPU Animation Layer ---------- */
+.gpu-layer {
+    transform: translateZ(0);
+    backface-visibility: hidden;
+    perspective: 1000;
+    will-change: transform, opacity;
+}
+
+/* ---------- Export Quality Indicators ---------- */
+.export-badge-4k {
+    background: linear-gradient(145deg, #2d3748, #1a202c);
+    box-shadow: 0 0 10px rgba(66, 153, 225, 0.3);
+    border: 1px solid rgba(66, 153, 225, 0.3);
+}
+
+/* ---------- Selection Glow (Fabric Override) ---------- */
+.canvas-container {
+    border-radius: 0.5rem !important;
+}
+
+.canvas-container *::selection {
+    background: rgba(99, 102, 241, 0.3);
+}
+
+/* Fabric.js Override for Dark Theme */
+.fabric-container {
+    background: transparent !important;
+}
+
+/* ---------- AI Asset Pulse Animation ---------- */
+@keyframes aiPulse {
+    0%, 100% { box-shadow: 0 0 0 0 rgba(99, 102, 241, 0.4); }
+    50% { box-shadow: 0 0 0 4px rgba(99, 102, 241, 0.1); }
+}
+
+.ai-asset-indicator {
+    animation: aiPulse 2s infinite;
+}
+
+/* ---------- Complex Nested Layout Support ---------- */
+.nested-grid {
+    display: grid;
+    grid-template-columns: auto auto 1fr auto;
+    grid-auto-rows: minmax(0, auto);
+}
+
+/* ---------- Performance Optimizations ---------- */
+* {
+    -webkit-tap-highlight-color: transparent;
+}
+
+/* ---------- Fabric Canvas Custom Controls ---------- */
+.fabric-canvas {
+    background: transparent !important;
+}
+
+/* ---------- 4K Export Overlay ---------- */
+.export-overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.9);
+    backdrop-filter: blur(10px);
+    z-index: 9999;
+    display: none;
     align-items: center;
     justify-content: center;
-    overflow: auto;
-    padding: 50px;
 }
 
-canvas {
-    background: white;
-    box-shadow: 0 40px 100px rgba(0,0,0,0.5);
-    border-radius: 4px;
-}
-
-.canvas-footer {
-    height: 40px;
-    background: #000;
-    border-top: 1px solid var(--border-color);
+.export-overlay.active {
     display: flex;
-    align-items: center;
-    justify-content: space-between;
-    padding: 0 20px;
-    font-size: 0.7rem;
-    color: var(--text-dim);
 }
 
-/* --- Column 4: Layers/Properties --- */
-.layers-panel {
-    background: var(--panel-bg);
-    border-right: 1px solid var(--border-color);
+/* ---------- GLSL Filter Badge ---------- */
+.glsl-badge {
+    background: linear-gradient(145deg, #312e81, #1e1b4b);
+    border: 1px solid rgba(129, 140, 248, 0.3);
 }
 
-.tabs-header {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    height: 50px;
-    border-bottom: 1px solid var(--border-color);
+/* ---------- Memory Efficient State Indicator ---------- */
+.state-marker {
+    width: 2px;
+    height: 2px;
+    background: rgba(255, 255, 255, 0.2);
+    transition: all 0.1s ease;
 }
 
-.tab-btn {
-    background: transparent;
-    color: var(--text-dim);
-    font-weight: bold;
-    font-size: 0.75rem;
-    cursor: pointer;
-    border: none;
+.state-marker.active {
+    background: #6366f1;
+    box-shadow: 0 0 4px #6366f1;
 }
 
-.tab-btn.active {
-    color: var(--accent-marble);
-    border-bottom: 2px solid var(--accent-marble);
+/* ---------- Responsive Design Guards ---------- */
+@media (max-width: 1280px) {
+    .right-panel {
+        width: 240px;
+    }
 }
 
-.prop-editor {
-    padding: 25px;
+/* ---------- Print Quality Styles ---------- */
+@media print {
+    .no-print {
+        display: none !important;
+    }
 }
 
-.empty-state {
-    text-align: center;
-    padding-top: 100px;
-    opacity: 0.2;
-}
-
-.empty-state i { font-size: 3rem; margin-bottom: 15px; }
-
-/* --- Modals & Buttons --- */
-.btn-primary {
-    background: var(--accent-marble);
-    color: black;
-    padding: 10px 20px;
-    border-radius: 8px;
-    font-weight: bold;
-    font-size: 0.8rem;
-    transition: var(--transition-fast);
-}
-
-.ai-glow {
-    box-shadow: 0 0 15px rgba(255,255,255,0.1);
-    animation: glow 3s infinite alternate;
-}
-
-@keyframes glow {
-    from { box-shadow: 0 0 5px rgba(255,255,255,0.1); }
-    to { box-shadow: 0 0 20px rgba(255,255,255,0.3); }
-}
-
-.hidden { display: none !important; }
+/* ---------- Custom Obsidian Color Classes ---------- */
+.bg-obisidian-950 { background-color: var(--obsidian-950); }
+.bg-obisidian-900 { background-color: var(--obsidian-900); }
+.bg-obisidian-800 { background-color: var(--obsidian-800); }
