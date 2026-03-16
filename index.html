@@ -1,171 +1,314 @@
 <!DOCTYPE html>
-<html lang="ar" dir="rtl">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>SMART DESIGNER PRO | Engine v6.0</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>SMART DESIGNER PRO · Black Marble Edition</title>
     
-    <link rel="stylesheet" href="style.css">
+    <!-- Tailwind + Custom layers -->
     <script src="https://cdn.tailwindcss.com"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/fabric.js/5.3.1/fabric.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+    
+    <!-- Core Dependencies -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/fabric.js/5.3.0/fabric.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    
+    <!-- Fonts & Icons -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css">
-    <script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>
+    
+    <!-- Custom Styles -->
+    <link rel="stylesheet" href="style.css">
 </head>
-<body class="bg-[#050505] text-white overflow-hidden select-none">
-
-    <div id="status-bar" class="h-1 bg-blue-600 w-0 fixed top-0 z-[9999] transition-all duration-500"></div>
-
-    <header class="main-header">
-        <div class="logo-section">
-            <div class="engine-logo">
-                <i class="fas fa-microchip"></i>
-            </div>
-            <div class="brand">
-                <span class="brand-main">SMART</span>
-                <span class="brand-sub">DESIGNER <small>v6.0</small></span>
-            </div>
-        </div>
-
-        <div class="action-center">
-            <div class="zoom-controls">
-                <button onclick="changeZoom(-0.1)"><i class="fas fa-search-minus"></i></button>
-                <span id="zoom-val">100%</span>
-                <button onclick="changeZoom(0.1)"><i class="fas fa-search-plus"></i></button>
-            </div>
-            <div class="divider"></div>
-            <button class="btn-secondary" onclick="undo()"><i class="fas fa-undo"></i></button>
-            <button class="btn-secondary" onclick="redo()"><i class="fas fa-redo"></i></button>
-            <div class="divider"></div>
-            <button class="btn-primary ai-glow" onclick="openExportModal()">
-                <i class="fas fa-cloud-download-alt"></i> تصدير المشروع
-            </button>
-        </div>
-    </header>
-
-    <main class="studio-container">
+<body class="bg-black text-white font-['Inter'] antialiased overflow-hidden">
+    <!-- Main App Container -->
+    <div id="app" class="h-screen w-screen flex flex-col bg-obisidian-950">
         
-        <aside class="main-toolbar">
-            <nav class="tool-nav">
-                <button class="nav-item active" data-target="panel-ai" title="الذكاء الاصطناعي">
-                    <i class="fas fa-brain"></i>
-                    <span>الذكاء</span>
+        <!-- Ultra-thin Status Bar -->
+        <div class="status-bar h-6 px-4 flex items-center justify-between text-xs text-white/30 border-b border-white/5">
+            <div class="flex items-center space-x-4">
+                <span class="w-2 h-2 rounded-full bg-emerald-500/50 animate-pulse"></span>
+                <span>SMART DESIGNER PRO · v2.4.3 · Enterprise License</span>
+            </div>
+            <div class="flex items-center space-x-6">
+                <span><i class="far fa-clock mr-1"></i> 120fps GPU</span>
+                <span><i class="far fa-hard-drive mr-1"></i> 16GB VRAM Pool</span>
+                <span><i class="far fa-bolt mr-1"></i> 4K Export Ready</span>
+            </div>
+        </div>
+
+        <!-- Primary Menu Bar (Glass) -->
+        <div class="menu-bar h-12 px-3 flex items-center justify-between bg-black/40 backdrop-blur-xl border-b border-white/10">
+            <div class="flex items-center space-x-1">
+                <button class="menu-btn px-3 py-1.5 rounded-lg text-sm font-medium text-white/70 hover:text-white hover:bg-white/5 transition-all duration-200">
+                    <i class="far fa-crown mr-2 text-amber-500/70"></i>File
                 </button>
-                <button class="nav-item" data-target="panel-elements" title="العناصر">
-                    <i class="fas fa-shapes"></i>
-                    <span>عناصر</span>
+                <button class="menu-btn px-3 py-1.5 rounded-lg text-sm font-medium text-white/70 hover:text-white hover:bg-white/5">Edit</button>
+                <button class="menu-btn px-3 py-1.5 rounded-lg text-sm font-medium text-white/70 hover:text-white hover:bg-white/5">View</button>
+                <button class="menu-btn px-3 py-1.5 rounded-lg text-sm font-medium text-white/70 hover:text-white hover:bg-white/5">Layer</button>
+                <button class="menu-btn px-3 py-1.5 rounded-lg text-sm font-medium text-white/70 hover:text-white hover:bg-white/5">Effects</button>
+                <button class="menu-btn px-3 py-1.5 rounded-lg text-sm font-medium text-white/70 hover:text-white hover:bg-white/5 bg-indigo-500/10 text-indigo-400">
+                    <i class="fas fa-robot mr-2"></i>AI Studio
                 </button>
-                <button class="nav-item" data-target="panel-text" title="النصوص">
+            </div>
+            <div class="flex items-center space-x-3">
+                <div class="flex items-center bg-black/30 rounded-lg p-0.5 border border-white/10">
+                    <button class="px-3 py-1 text-xs rounded-md bg-white/10 text-white">Design</button>
+                    <button class="px-3 py-1 text-xs rounded-md text-white/50">Prototype</button>
+                    <button class="px-3 py-1 text-xs rounded-md text-white/50">Code</button>
+                </div>
+                <div class="h-4 w-px bg-white/10"></div>
+                <button class="w-7 h-7 rounded-full bg-gradient-to-br from-amber-500 to-amber-600 flex items-center justify-center text-xs font-bold shadow-lg shadow-amber-500/20">
+                    <i class="fas fa-bolt text-white text-[10px]"></i>
+                </button>
+            </div>
+        </div>
+
+        <!-- Main Workspace (Nested Layouts) -->
+        <div class="flex-1 flex min-h-0 relative">
+            
+            <!-- Left Toolbar - Obsidian Column -->
+            <div class="left-toolbar w-14 bg-gradient-to-b from-black/90 to-obisidian-900 backdrop-blur-xl border-r border-white/10 flex flex-col items-center py-4 space-y-4">
+                <button class="tool-icon w-10 h-10 rounded-xl hover:bg-white/5 flex items-center justify-center text-white/60 hover:text-white transition-all duration-200 relative group">
+                    <i class="fas fa-mouse-pointer text-lg"></i>
+                    <span class="absolute left-full ml-2 px-2 py-1 bg-black/90 text-xs rounded border border-white/10 whitespace-nowrap opacity-0 group-hover:opacity-100 pointer-events-none transition">Select (V)</span>
+                </button>
+                <button class="tool-icon w-10 h-10 rounded-xl bg-white/10 text-white shadow-lg shadow-indigo-500/20 relative">
+                    <i class="fas fa-vector-square text-lg"></i>
+                    <div class="absolute -bottom-1 -right-1 w-3 h-3 bg-indigo-500 rounded-full border-2 border-black"></div>
+                </button>
+                <button class="tool-icon w-10 h-10 rounded-xl hover:bg-white/5 flex items-center justify-center text-white/60 hover:text-white">
+                    <i class="fas fa-pen-fancy"></i>
+                </button>
+                <button class="tool-icon w-10 h-10 rounded-xl hover:bg-white/5 flex items-center justify-center text-white/60 hover:text-white">
                     <i class="fas fa-font"></i>
-                    <span>نصوص</span>
                 </button>
-                <button class="nav-item" data-target="panel-draw" title="الرسم">
-                    <i class="fas fa-paint-brush"></i>
-                    <span>رسم</span>
+                <button class="tool-icon w-10 h-10 rounded-xl hover:bg-white/5 flex items-center justify-center text-white/60 hover:text-white">
+                    <i class="fas fa-circle"></i>
                 </button>
-                <button class="nav-item" data-target="panel-uploads" title="المرفوعات">
-                    <i class="fas fa-cloud-upload-alt"></i>
-                    <span>رفع</span>
+                <div class="w-6 h-px bg-white/10 my-2"></div>
+                <button class="tool-icon w-10 h-10 rounded-xl hover:bg-white/5 flex items-center justify-center text-white/60 hover:text-white">
+                    <i class="fas fa-hand"></i>
                 </button>
-            </nav>
-            <div class="toolbar-footer">
-                <button class="settings-btn" onclick="toggleSettings()"><i class="fas fa-cog"></i></button>
-            </div>
-        </aside>
-
-        <aside class="control-panel">
-            <div id="panel-ai" class="panel-content">
-                <h2 class="panel-header">محرك AI التوليدي</h2>
-                <div class="ai-box">
-                    <textarea id="ai-prompt" placeholder="صف ما تريد تصميمه بالإنجليزية..."></textarea>
-                    <button id="generate-btn" class="ai-execute">
-                        <span>توليد صورة ذكية</span>
-                        <i class="fas fa-sparkles"></i>
-                    </button>
-                </div>
-                <div class="ai-suggestions">
-                    <span class="tag">Cyberpunk</span>
-                    <span class="tag">Minimalist</span>
-                    <span class="tag">Saudi 2030</span>
-                </div>
+                <button class="tool-icon w-10 h-10 rounded-xl hover:bg-white/5 flex items-center justify-center text-white/60 hover:text-white">
+                    <i class="fas fa-undo-alt"></i>
+                </button>
+                <button class="tool-icon w-10 h-10 rounded-xl hover:bg-white/5 flex items-center justify-center text-white/60 hover:text-white mt-auto">
+                    <i class="fas fa-cog"></i>
+                </button>
             </div>
 
-            <div id="panel-elements" class="panel-content hidden">
-                <h2 class="panel-header">المكتبة الهندسية</h2>
-                <div class="elements-grid">
-                    <div class="elem-card" onclick="addShape('rect')"><i class="fas fa-square"></i><span>مربع</span></div>
-                    <div class="elem-card" onclick="addShape('circle')"><i class="fas fa-circle"></i><span>دائرة</span></div>
-                    <div class="elem-card" onclick="addShape('triangle')"><i class="fas fa-play -rotate-90"></i><span>مثلث</span></div>
-                    <div class="elem-card" onclick="addShape('star')"><i class="fas fa-star"></i><span>نجمة</span></div>
-                </div>
+            <!-- Secondary Properties Bar (Collapsible) -->
+            <div class="properties-bar w-12 bg-black/40 backdrop-blur-md border-r border-white/10 flex flex-col items-center py-4">
+                <div class="transform -rotate-90 whitespace-nowrap text-[10px] tracking-widest text-white/30 mb-8 uppercase">Properties · 2024</div>
+                <button class="w-8 h-8 rounded-lg hover:bg-white/5 flex items-center justify-center text-white/40 hover:text-white mb-2">
+                    <i class="fas fa-arrows-alt"></i>
+                </button>
+                <button class="w-8 h-8 rounded-lg hover:bg-white/5 flex items-center justify-center text-white/40 hover:text-white mb-2">
+                    <i class="fas fa-rotate"></i>
+                </button>
+                <button class="w-8 h-8 rounded-lg hover:bg-white/5 flex items-center justify-center text-white/40 hover:text-white mb-2">
+                    <i class="fas fa-scale-balanced"></i>
+                </button>
+                <div class="w-4 h-px bg-white/10 my-2"></div>
+                <button class="w-8 h-8 rounded-lg bg-indigo-500/20 text-indigo-400">
+                    <i class="fas fa-layer-group"></i>
+                </button>
             </div>
 
-            <div id="panel-draw" class="panel-content hidden">
-                <h2 class="panel-header">إعدادات الريشة</h2>
-                <div class="setting-group">
-                    <label>حجم الفرشاة</label>
-                    <input type="range" id="brush-size" min="1" max="100" value="10">
-                </div>
-                <div class="setting-group">
-                    <label>لون الرسم</label>
-                    <div id="brush-color-picker"></div>
-                </div>
-                <button class="btn-full" onclick="toggleDrawingMode()">تفعيل وضع الرسم</button>
-            </div>
-        </aside>
-
-        <section class="canvas-viewport">
-            <div id="canvas-wrapper" class="canvas-inner shadow-2xl">
-                <canvas id="main-canvas"></canvas>
-            </div>
-            
-            <footer class="canvas-footer">
-                <div class="footer-stats">
-                    <span>العناصر: <b id="obj-count">0</b></span>
-                    <div class="v-divider"></div>
-                    <span>الطبقة النشطة: <b id="active-layer">Background</b></span>
-                </div>
-                <div class="footer-info">
-                    <i class="fas fa-keyboard"></i> اختصارات النظام مفعلة
-                </div>
-            </footer>
-        </aside>
-
-        <aside class="layers-panel">
-            <div class="tabs-header">
-                <button class="tab-btn active">الخصائص</button>
-                <button class="tab-btn">الطبقات</button>
-            </div>
-            
-            <div class="tab-body">
-                <div id="property-editor" class="prop-editor empty">
-                    <div class="empty-state">
-                        <i class="fas fa-mouse-pointer"></i>
-                        <p>حدد عنصراً لتعديله</p>
+            <!-- Main Canvas Area (Heart of the Engine) -->
+            <div class="flex-1 flex flex-col min-w-0 relative">
+                
+                <!-- Canvas Toolbar -->
+                <div class="canvas-toolbar h-10 px-4 flex items-center justify-between bg-black/20 backdrop-blur-sm border-b border-white/5">
+                    <div class="flex items-center space-x-2 text-xs">
+                        <span class="text-white/40">Canvas:</span>
+                        <span class="text-white/80">1920 x 1080</span>
+                        <span class="text-white/30">|</span>
+                        <span class="text-white/40">DPI:</span>
+                        <span class="text-white/80">300</span>
+                        <span class="text-white/30">|</span>
+                        <span class="text-white/40">Layers:</span>
+                        <span class="text-white/80">7</span>
+                    </div>
+                    <div class="flex items-center space-x-2">
+                        <button class="px-2 py-1 rounded bg-white/5 text-xs text-white/60 hover:text-white">
+                            <i class="fas fa-ruler mr-1"></i> Guides
+                        </button>
+                        <button class="px-2 py-1 rounded bg-white/5 text-xs text-white/60 hover:text-white">
+                            <i class="fas fa-magic mr-1"></i> Smart
+                        </button>
+                        <div class="h-3 w-px bg-white/10 mx-1"></div>
+                        <span class="text-xs text-white/40">100%</span>
+                        <button class="w-5 h-5 rounded bg-white/10 flex items-center justify-center text-[10px]">+</button>
+                        <button class="w-5 h-5 rounded bg-white/5 flex items-center justify-center text-[10px]">-</button>
                     </div>
                 </div>
 
-                <div id="layers-list" class="layers-stack hidden">
+                <!-- Canvas Container with Grid Overlay -->
+                <div class="flex-1 relative overflow-hidden bg-obisidian-950">
+                    <!-- Infinite Grid Background (GPU Accelerated) -->
+                    <div class="absolute inset-0 bg-grid-pattern opacity-20 animate-slow-drift"></div>
+                    
+                    <!-- Canvas Wrapper (Fabric.js will mount here) -->
+                    <div id="canvas-wrapper" class="absolute inset-0 flex items-center justify-center">
+                        <div id="canvas-container" class="relative shadow-2xl shadow-black/50 border border-white/10 rounded-lg overflow-hidden" style="width: 1200px; height: 675px;">
+                            <canvas id="smart-canvas" width="1200" height="675"></canvas>
+                            
+                            <!-- Corner Handles -->
+                            <div class="absolute top-0 left-0 w-3 h-3 border-t-2 border-l-2 border-indigo-500/50 pointer-events-none"></div>
+                            <div class="absolute top-0 right-0 w-3 h-3 border-t-2 border-r-2 border-indigo-500/50 pointer-events-none"></div>
+                            <div class="absolute bottom-0 left-0 w-3 h-3 border-b-2 border-l-2 border-indigo-500/50 pointer-events-none"></div>
+                            <div class="absolute bottom-0 right-0 w-3 h-3 border-b-2 border-r-2 border-indigo-500/50 pointer-events-none"></div>
+                        </div>
                     </div>
-            </div>
-        </aside>
 
-    </main>
+                    <!-- Floating HUD Elements -->
+                    <div class="absolute bottom-4 left-4 glass-panel px-3 py-2 text-xs flex items-center space-x-3">
+                        <span><i class="far fa-layer-group mr-1 text-indigo-400"></i> 7 Layers</span>
+                        <span class="w-px h-3 bg-white/10"></span>
+                        <span><i class="far fa-history mr-1 text-amber-400"></i> 23 History</span>
+                        <span class="w-px h-3 bg-white/10"></span>
+                        <span><i class="far fa-bolt mr-1 text-emerald-400"></i> GPU Render</span>
+                    </div>
+                </div>
 
-    <div id="export-modal" class="modal-overlay hidden">
-        <div class="modal-content animate__animated animate__zoomIn">
-            <h3>تصدير المشروع النهائي</h3>
-            <p>اختر الصيغة والجودة المناسبة لتصميمك</p>
-            <div class="export-options">
-                <button onclick="doExport('png')">PNG (شفاف)</button>
-                <button onclick="doExport('jpg')">JPG (عالي الجودة)</button>
-                <button onclick="doExport('json')">ملف مشروع (للتعديل لاحقاً)</button>
+                <!-- Timeline / Layers Mini Preview -->
+                <div class="timeline-bar h-12 bg-black/40 backdrop-blur-md border-t border-white/10 flex items-center px-4">
+                    <div class="flex items-center space-x-2 text-xs text-white/40 w-24">
+                        <i class="fas fa-chevron-left text-[10px]"></i>
+                        <span>Layer 1/7</span>
+                        <i class="fas fa-chevron-right text-[10px]"></i>
+                    </div>
+                    <div class="flex-1 flex items-center space-x-1">
+                        <div class="w-px h-4 bg-white/10 mx-2"></div>
+                        <div class="timeline-track flex-1 h-1 bg-white/5 rounded-full overflow-hidden">
+                            <div class="h-full w-3/4 bg-gradient-to-r from-indigo-500 to-indigo-400 rounded-full"></div>
+                        </div>
+                        <span class="text-xs text-white/40 ml-2">00:00:12 / 00:00:45</span>
+                    </div>
+                </div>
             </div>
-            <button class="close-modal" onclick="closeModal()">إلغاء</button>
+
+            <!-- Right Panel - Layers & Properties (Complex Nested) -->
+            <div class="right-panel w-72 bg-black/60 backdrop-blur-xl border-l border-white/10 flex flex-col">
+                
+                <!-- Panel Tabs -->
+                <div class="flex border-b border-white/10">
+                    <button class="flex-1 py-3 text-xs font-medium text-white border-b-2 border-indigo-500">LAYERS</button>
+                    <button class="flex-1 py-3 text-xs font-medium text-white/40 hover:text-white">PROPERTIES</button>
+                    <button class="flex-1 py-3 text-xs font-medium text-white/40 hover:text-white">ASSETS</button>
+                </div>
+
+                <!-- Layer Controls -->
+                <div class="p-3 border-b border-white/10 flex items-center justify-between">
+                    <div class="flex items-center space-x-1">
+                        <button class="p-1.5 rounded hover:bg-white/5 text-white/60 hover:text-white">
+                            <i class="fas fa-eye text-xs"></i>
+                        </button>
+                        <button class="p-1.5 rounded hover:bg-white/5 text-white/60 hover:text-white">
+                            <i class="fas fa-lock-open text-xs"></i>
+                        </button>
+                        <button class="p-1.5 rounded hover:bg-white/5 text-white/60 hover:text-white">
+                            <i class="fas fa-link text-xs"></i>
+                        </button>
+                    </div>
+                    <span class="text-[10px] text-white/30">7 Layers · 3 Hidden</span>
+                </div>
+
+                <!-- Recursive Layer Tree (Visual Representation) -->
+                <div class="flex-1 overflow-y-auto custom-scrollbar p-2 space-y-0.5">
+                    
+                    <!-- Layer Item 1 - Group (Expanded) -->
+                    <div class="layer-group">
+                        <div class="flex items-center py-1.5 px-2 rounded hover:bg-white/5 group cursor-pointer border-l-2 border-indigo-500 bg-white/5">
+                            <i class="fas fa-chevron-down text-[8px] text-white/30 w-4"></i>
+                            <i class="fas fa-layer-group text-indigo-400 text-xs w-5"></i>
+                            <span class="text-xs flex-1">Brand Assets</span>
+                            <i class="far fa-eye text-white/60 hover:text-white text-xs mx-1"></i>
+                            <i class="far fa-lock-open text-white/30 hover:text-white text-xs"></i>
+                        </div>
+                        <!-- Children (Recursive) -->
+                        <div class="ml-4 pl-2 border-l border-white/10 space-y-0.5 mt-0.5">
+                            <div class="flex items-center py-1.5 px-2 rounded hover:bg-white/5 group">
+                                <i class="fas fa-circle text-[4px] text-white/30 w-4"></i>
+                                <i class="fas fa-image text-white/40 text-xs w-5"></i>
+                                <span class="text-xs flex-1">Logo_Master.ai</span>
+                                <i class="far fa-eye text-white/60 hover:text-white text-xs mx-1"></i>
+                                <i class="far fa-lock-open text-white/30 hover:text-white text-xs"></i>
+                            </div>
+                            <div class="flex items-center py-1.5 px-2 rounded hover:bg-white/5 group">
+                                <i class="fas fa-circle text-[4px] text-white/30 w-4"></i>
+                                <i class="fas fa-font text-white/40 text-xs w-5"></i>
+                                <span class="text-xs flex-1">Typography</span>
+                                <i class="far fa-eye-slash text-white/30 text-xs mx-1"></i>
+                                <i class="far fa-lock text-white/30 text-xs"></i>
+                            </div>
+                            <!-- Nested Group -->
+                            <div class="layer-group">
+                                <div class="flex items-center py-1.5 px-2 rounded hover:bg-white/5 group">
+                                    <i class="fas fa-chevron-right text-[8px] text-white/30 w-4"></i>
+                                    <i class="fas fa-layer-group text-white/40 text-xs w-5"></i>
+                                    <span class="text-xs flex-1">Icons Pack</span>
+                                    <i class="far fa-eye text-white/60 hover:text-white text-xs mx-1"></i>
+                                    <i class="far fa-lock-open text-white/30 hover:text-white text-xs"></i>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Layer Item 2 - Image with Effects -->
+                    <div class="flex items-center py-1.5 px-2 rounded hover:bg-white/5 group mt-1">
+                        <i class="fas fa-circle text-[4px] text-white/30 w-4"></i>
+                        <i class="fas fa-camera text-white/40 text-xs w-5"></i>
+                        <span class="text-xs flex-1">Hero_BG_4K.jpg</span>
+                        <span class="text-[8px] bg-indigo-500/20 text-indigo-300 px-1 rounded mr-1">FX</span>
+                        <i class="far fa-eye text-white/60 hover:text-white text-xs mx-1"></i>
+                        <i class="far fa-lock-open text-white/30 hover:text-white text-xs"></i>
+                    </div>
+
+                    <!-- Layer Item 3 - Smart Object -->
+                    <div class="flex items-center py-1.5 px-2 rounded bg-gradient-to-r from-indigo-500/10 to-transparent border-l-2 border-indigo-500 mt-1">
+                        <i class="fas fa-circle text-[4px] text-indigo-400 w-4"></i>
+                        <i class="fas fa-bolt text-indigo-400 text-xs w-5"></i>
+                        <span class="text-xs flex-1 font-medium">AI_Generated_Vector</span>
+                        <span class="text-[8px] bg-amber-500/20 text-amber-300 px-1 rounded mr-1">AI</span>
+                        <i class="far fa-eye text-white/60 hover:text-white text-xs mx-1"></i>
+                        <i class="far fa-lock-open text-white/30 hover:text-white text-xs"></i>
+                    </div>
+
+                    <!-- Layer Item 4 - Adjustment Layer -->
+                    <div class="flex items-center py-1.5 px-2 rounded hover:bg-white/5 group mt-1">
+                        <i class="fas fa-circle text-[4px] text-white/30 w-4"></i>
+                        <i class="fas fa-adjust text-emerald-400 text-xs w-5"></i>
+                        <span class="text-xs flex-1">Color Grading</span>
+                        <i class="far fa-eye text-white/60 hover:text-white text-xs mx-1"></i>
+                        <i class="far fa-lock-open text-white/30 hover:text-white text-xs"></i>
+                    </div>
+                </div>
+
+                <!-- Layer Actions -->
+                <div class="p-3 border-t border-white/10 flex justify-between">
+                    <button class="text-xs text-white/40 hover:text-white"><i class="fas fa-plus mr-1"></i>New</button>
+                    <button class="text-xs text-white/40 hover:text-white"><i class="fas fa-object-group mr-1"></i>Group</button>
+                    <button class="text-xs text-white/40 hover:text-white"><i class="fas fa-trash-alt mr-1"></i></button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Status Bar Bottom -->
+        <div class="h-6 px-4 flex items-center justify-between text-[10px] text-white/20 border-t border-white/5">
+            <div class="flex items-center space-x-4">
+                <span>© 2024 SMART DESIGNER PRO · Quantum Render Engine v2</span>
+                <span>Memory: 342MB / 4GB</span>
+            </div>
+            <div class="flex items-center space-x-3">
+                <span><i class="fas fa-circle text-[4px] text-emerald-400 mr-1"></i> 120 FPS</span>
+                <span>GPU: RTX 4090</span>
+            </div>
         </div>
     </div>
 
+    <!-- Script will be injected here -->
     <script src="script.js"></script>
 </body>
 </html>
