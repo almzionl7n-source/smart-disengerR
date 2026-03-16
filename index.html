@@ -3,409 +3,169 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>SAUD OS CANVAS | النظام التصميمي المتكامل</title>
+    <title>SMART DESIGNER PRO | Engine v6.0</title>
     
+    <link rel="stylesheet" href="style.css">
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/fabric.js/5.3.1/fabric.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css">
     <script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>
-
-    <style>
-        @import url('https://fonts.googleapis.com/css2?family=Tajawal:wght@200;400;700;900&family=Orbitron:wght@400;900&family=Fira+Code:wght@300;500&display=swap');
-        
-        :root {
-            --primary: #3b82f6; --bg: #050505; --panel: #0f0f0f; --border: rgba(255,255,255,0.08);
-        }
-
-        body { font-family: 'Tajawal', sans-serif; background: var(--bg); color: white; height: 100vh; overflow: hidden; }
-
-        /* تجميل الواجهة */
-        .neon-border { border: 1px solid var(--primary); box-shadow: 0 0 15px rgba(59, 130, 246, 0.2); }
-        .sidebar-item { @apply flex flex-col items-center p-3 mb-2 rounded-xl transition-all cursor-pointer hover:bg-white/5 text-gray-500 hover:text-blue-500; }
-        .sidebar-item.active { @apply bg-blue-600/10 text-blue-500 border-r-4 border-blue-500; }
-        
-        /* منطقة العمل */
-        .workspace { background: #111; background-image: radial-gradient(#222 1px, transparent 1px); background-size: 30px 30px; }
-        .canvas-shadow { box-shadow: 0 40px 100px rgba(0,0,0,0.9); transition: transform 0.3s ease; }
-
-        /* نظام الطبقات */
-        .layer-item { @apply flex items-center justify-between p-2 mb-1 bg-white/5 rounded border border-white/5 text-[10px] hover:bg-white/10; }
-        
-        /* التحكم بالخصائص */
-        .prop-card { @apply bg-white/5 p-3 rounded-lg border border-white/5 mb-3; }
-        input[type="range"] { @apply w-full h-1 bg-gray-700 rounded-lg appearance-none cursor-pointer accent-blue-500; }
-
-        /* لودينق ستايل */
-        #loader { background: #000; z-index: 9999; position: fixed; inset: 0; display: flex; align-items: center; justify-center; }
-    </style>
 </head>
-<body class="flex flex-col">
+<body class="bg-[#050505] text-white overflow-hidden select-none">
 
-    <div id="loader">
-        <div class="text-center">
-            <h1 class="text-4xl font-black mb-4 animate__animated animate__pulse animate__infinite">SAUD OS</h1>
-            <div class="w-48 h-1 bg-gray-800 rounded-full overflow-hidden">
-                <div class="h-full bg-blue-600 animate-progress" style="width: 60%"></div>
-            </div>
-        </div>
-    </div>
+    <div id="status-bar" class="h-1 bg-blue-600 w-0 fixed top-0 z-[9999] transition-all duration-500"></div>
 
-    <nav class="h-14 bg-black border-b border-white/5 flex items-center justify-between px-6 z-50">
-        <div class="flex items-center gap-8">
-            <div class="text-xl font-black tracking-tighter flex items-center gap-2">
-                <div class="w-8 h-8 bg-blue-600 rounded flex items-center justify-center text-sm italic">S</div>
-                SAUD <span class="text-blue-500 font-light italic text-xs tracking-widest">OS DESIGNER</span>
+    <header class="main-header">
+        <div class="logo-section">
+            <div class="engine-logo">
+                <i class="fas fa-microchip"></i>
             </div>
-            <div class="flex gap-4 text-[10px] font-bold text-gray-500 uppercase">
-                <button onclick="undo()" class="hover:text-white transition"><i class="fas fa-undo mr-1"></i> Undo</button>
-                <button onclick="redo()" class="hover:text-white transition"><i class="fas fa-redo mr-1"></i> Redo</button>
+            <div class="brand">
+                <span class="brand-main">SMART</span>
+                <span class="brand-sub">DESIGNER <small>v6.0</small></span>
             </div>
         </div>
 
-        <div class="flex items-center gap-4">
-            <button onclick="exportJSON()" class="text-[10px] text-gray-400 hover:text-white border border-white/10 px-3 py-1 rounded">حفظ المشروع</button>
-            <button onclick="downloadPNG()" class="bg-blue-600 hover:bg-blue-500 text-white px-6 py-1.5 rounded-lg font-bold text-sm shadow-lg shadow-blue-500/20 transition active:scale-95">
-                تصدير احترافي
+        <div class="action-center">
+            <div class="zoom-controls">
+                <button onclick="changeZoom(-0.1)"><i class="fas fa-search-minus"></i></button>
+                <span id="zoom-val">100%</span>
+                <button onclick="changeZoom(0.1)"><i class="fas fa-search-plus"></i></button>
+            </div>
+            <div class="divider"></div>
+            <button class="btn-secondary" onclick="undo()"><i class="fas fa-undo"></i></button>
+            <button class="btn-secondary" onclick="redo()"><i class="fas fa-redo"></i></button>
+            <div class="divider"></div>
+            <button class="btn-primary ai-glow" onclick="openExportModal()">
+                <i class="fas fa-cloud-download-alt"></i> تصدير المشروع
             </button>
         </div>
-    </nav>
+    </header>
 
-    <div class="flex flex-1 overflow-hidden">
+    <main class="studio-container">
         
-        <aside class="w-20 bg-black border-l border-white/5 flex flex-col py-4 px-2 items-center z-40 shadow-2xl">
-            <div onclick="showTab('templates')" class="sidebar-item active" id="tab-btn-templates"><i class="fas fa-grid-2 text-xl mb-1"></i><span class="text-[8px]">قوالب</span></div>
-            <div onclick="showTab('shapes')" class="sidebar-item" id="tab-btn-shapes"><i class="fas fa-shapes text-xl mb-1"></i><span class="text-[8px]">عناصر</span></div>
-            <div onclick="showTab('text')" class="sidebar-item" id="tab-btn-text"><i class="fas fa-text-height text-xl mb-1"></i><span class="text-[8px]">نصوص</span></div>
-            <div onclick="showTab('ai')" class="sidebar-item text-purple-500" id="tab-btn-ai"><i class="fas fa-wand-magic-sparkles text-xl mb-1"></i><span class="text-[8px]">AI</span></div>
-            <div onclick="showTab('draw')" class="sidebar-item" id="tab-btn-draw"><i class="fas fa-paintbrush text-xl mb-1"></i><span class="text-[8px]">فرشاة</span></div>
-            <div class="mt-auto">
-                <label class="sidebar-item cursor-pointer text-green-500"><i class="fas fa-cloud-arrow-up text-xl mb-1"></i><input type="file" id="mainUpload" class="hidden"></label>
+        <aside class="main-toolbar">
+            <nav class="tool-nav">
+                <button class="nav-item active" data-target="panel-ai" title="الذكاء الاصطناعي">
+                    <i class="fas fa-brain"></i>
+                    <span>الذكاء</span>
+                </button>
+                <button class="nav-item" data-target="panel-elements" title="العناصر">
+                    <i class="fas fa-shapes"></i>
+                    <span>عناصر</span>
+                </button>
+                <button class="nav-item" data-target="panel-text" title="النصوص">
+                    <i class="fas fa-font"></i>
+                    <span>نصوص</span>
+                </button>
+                <button class="nav-item" data-target="panel-draw" title="الرسم">
+                    <i class="fas fa-paint-brush"></i>
+                    <span>رسم</span>
+                </button>
+                <button class="nav-item" data-target="panel-uploads" title="المرفوعات">
+                    <i class="fas fa-cloud-upload-alt"></i>
+                    <span>رفع</span>
+                </button>
+            </nav>
+            <div class="toolbar-footer">
+                <button class="settings-btn" onclick="toggleSettings()"><i class="fas fa-cog"></i></button>
             </div>
         </aside>
 
-        <aside class="w-72 bg-[#0d0d0d] border-l border-white/5 p-5 overflow-y-auto scrollbar-hide z-30">
-            
-            <div id="tab-templates" class="tab-content">
-                <h3 class="text-xs font-black text-blue-500 mb-6 tracking-widest uppercase">نماذج سريعة</h3>
-                <div class="grid grid-cols-1 gap-4">
-                    <div onclick="setCanvasSize(1080,1080)" class="bg-white/5 p-4 rounded-xl border border-white/10 cursor-pointer hover:border-blue-500 transition group">
-                        <div class="w-full h-24 bg-gradient-to-br from-blue-900 to-black rounded-lg mb-2 overflow-hidden flex items-center justify-center">
-                            <i class="fab fa-instagram text-3xl group-hover:scale-125 transition"></i>
-                        </div>
-                        <span class="text-xs font-bold block">بوست انستقرام</span>
-                        <span class="text-[9px] text-gray-500 uppercase">1080 x 1080</span>
-                    </div>
-                    <div onclick="setCanvasSize(1080,1920)" class="bg-white/5 p-4 rounded-xl border border-white/10 cursor-pointer hover:border-blue-500 transition group">
-                        <div class="w-full h-24 bg-gradient-to-br from-purple-900 to-black rounded-lg mb-2 overflow-hidden flex items-center justify-center">
-                            <i class="fab fa-snapchat text-3xl group-hover:scale-125 transition"></i>
-                        </div>
-                        <span class="text-xs font-bold block">ستوري سناب</span>
-                        <span class="text-[9px] text-gray-500 uppercase">1080 x 1920</span>
-                    </div>
+        <aside class="control-panel">
+            <div id="panel-ai" class="panel-content">
+                <h2 class="panel-header">محرك AI التوليدي</h2>
+                <div class="ai-box">
+                    <textarea id="ai-prompt" placeholder="صف ما تريد تصميمه بالإنجليزية..."></textarea>
+                    <button id="generate-btn" class="ai-execute">
+                        <span>توليد صورة ذكية</span>
+                        <i class="fas fa-sparkles"></i>
+                    </button>
+                </div>
+                <div class="ai-suggestions">
+                    <span class="tag">Cyberpunk</span>
+                    <span class="tag">Minimalist</span>
+                    <span class="tag">Saudi 2030</span>
                 </div>
             </div>
 
-            <div id="tab-shapes" class="tab-content hidden">
-                <h3 class="text-xs font-black text-blue-500 mb-6 tracking-widest uppercase">مكتبة الأشكال</h3>
-                <div class="grid grid-cols-2 gap-3">
-                    <button onclick="addRect()" class="bg-white/5 p-4 rounded-lg hover:bg-blue-600 transition text-sm">مربع</button>
-                    <button onclick="addCircle()" class="bg-white/5 p-4 rounded-lg hover:bg-blue-600 transition text-sm">دائرة</button>
-                    <button onclick="addTriangle()" class="bg-white/5 p-4 rounded-lg hover:bg-blue-600 transition text-sm">مثلث</button>
-                    <button onclick="addStar()" class="bg-white/5 p-4 rounded-lg hover:bg-blue-600 transition text-sm text-yellow-500">نجمة</button>
+            <div id="panel-elements" class="panel-content hidden">
+                <h2 class="panel-header">المكتبة الهندسية</h2>
+                <div class="elements-grid">
+                    <div class="elem-card" onclick="addShape('rect')"><i class="fas fa-square"></i><span>مربع</span></div>
+                    <div class="elem-card" onclick="addShape('circle')"><i class="fas fa-circle"></i><span>دائرة</span></div>
+                    <div class="elem-card" onclick="addShape('triangle')"><i class="fas fa-play -rotate-90"></i><span>مثلث</span></div>
+                    <div class="elem-card" onclick="addShape('star')"><i class="fas fa-star"></i><span>نجمة</span></div>
                 </div>
             </div>
 
-            <div id="tab-text" class="tab-content hidden">
-                <h3 class="text-xs font-black text-blue-500 mb-6 tracking-widest uppercase">إضافة نص</h3>
-                <button onclick="addText('heading')" class="w-full bg-white text-black font-black p-4 rounded-xl mb-4 text-sm">إضافة عنوان</button>
-                <button onclick="addText('body')" class="w-full bg-white/10 text-white p-3 rounded-xl mb-4 text-sm border border-white/10">نص فرعي</button>
-            </div>
-
-            <div id="tab-ai" class="tab-content hidden">
-                <div class="bg-purple-900/20 p-4 rounded-xl border border-purple-500/30 mb-6">
-                    <h3 class="text-xs font-black text-purple-400 mb-2 uppercase">SAUD AI MAGIC</h3>
-                    <p class="text-[9px] text-gray-400 leading-relaxed">تخيل أي صورة، واكتب وصفها هنا بالإنجليزية، والذكاء الاصطناعي سيتكفل بالباقي.</p>
+            <div id="panel-draw" class="panel-content hidden">
+                <h2 class="panel-header">إعدادات الريشة</h2>
+                <div class="setting-group">
+                    <label>حجم الفرشاة</label>
+                    <input type="range" id="brush-size" min="1" max="100" value="10">
                 </div>
-                <textarea id="aiPrompt" rows="5" class="w-full bg-black border border-white/10 rounded-xl p-3 text-xs mb-4 outline-none focus:border-purple-500" placeholder="e.g. A futuristic city with neon lights..."></textarea>
-                <button onclick="generateAI()" id="aiBtn" class="w-full bg-gradient-to-r from-purple-600 to-blue-600 p-4 rounded-xl font-bold text-sm shadow-xl hover:scale-105 transition">توليد وإضافة للوحة</button>
-            </div>
-
-            <div id="tab-draw" class="tab-content hidden">
-                <h3 class="text-xs font-black text-blue-500 mb-6 tracking-widest uppercase">إعدادات الفرشاة</h3>
-                <div class="prop-card">
-                    <label class="text-[10px] text-gray-500 block mb-2">لون الفرشاة</label>
-                    <input type="color" id="brushColor" class="w-full h-10 bg-transparent cursor-pointer" value="#3b82f6">
+                <div class="setting-group">
+                    <label>لون الرسم</label>
+                    <div id="brush-color-picker"></div>
                 </div>
-                <div class="prop-card">
-                    <label class="text-[10px] text-gray-500 block mb-2">حجم الفرشاة: <span id="brushSizeVal">5</span></label>
-                    <input type="range" id="brushSize" min="1" max="100" value="5">
-                </div>
-                <button onclick="toggleDrawing()" id="drawingState" class="w-full bg-blue-600 py-3 rounded-xl font-bold text-sm">تفعيل الرسم</button>
+                <button class="btn-full" onclick="toggleDrawingMode()">تفعيل وضع الرسم</button>
             </div>
-
         </aside>
 
-        <main class="flex-1 workspace flex items-center justify-center p-12 overflow-auto relative">
-            <div class="canvas-shadow relative">
-                <canvas id="c"></canvas>
+        <section class="canvas-viewport">
+            <div id="canvas-wrapper" class="canvas-inner shadow-2xl">
+                <canvas id="main-canvas"></canvas>
             </div>
             
-            <div class="absolute bottom-8 left-1/2 -translate-x-1/2 bg-black/80 backdrop-blur border border-white/10 px-6 py-3 rounded-2xl flex items-center gap-6 shadow-2xl">
-                <div class="flex gap-4">
-                    <button onclick="canvas.getActiveObject()?.bringForward()" title="للأمام"><i class="fas fa-layer-group text-gray-400 hover:text-white"></i></button>
-                    <button onclick="canvas.getActiveObject()?.sendBackwards()" title="للخلف"><i class="fas fa-layer-minus text-gray-400 hover:text-white"></i></button>
+            <footer class="canvas-footer">
+                <div class="footer-stats">
+                    <span>العناصر: <b id="obj-count">0</b></span>
+                    <div class="v-divider"></div>
+                    <span>الطبقة النشطة: <b id="active-layer">Background</b></span>
                 </div>
-                <div class="w-px h-6 bg-white/10"></div>
-                <button onclick="deleteObject()" class="text-red-500 hover:scale-125 transition"><i class="fas fa-trash-alt"></i></button>
-            </div>
-        </main>
+                <div class="footer-info">
+                    <i class="fas fa-keyboard"></i> اختصارات النظام مفعلة
+                </div>
+            </footer>
+        </aside>
 
-        <aside class="w-72 bg-black border-r border-white/5 flex flex-col z-30 overflow-hidden">
+        <aside class="layers-panel">
+            <div class="tabs-header">
+                <button class="tab-btn active">الخصائص</button>
+                <button class="tab-btn">الطبقات</button>
+            </div>
             
-            <div class="flex-1 p-5 overflow-y-auto scrollbar-hide">
-                <div id="noSelection" class="text-center py-20">
-                    <div class="w-16 h-16 bg-white/5 rounded-full flex items-center justify-center mx-auto mb-4 text-gray-700">
-                        <i class="fas fa-hand-pointer text-2xl"></i>
-                    </div>
-                    <p class="text-[10px] text-gray-600 uppercase font-black">لا يوجد عنصر محدد</p>
-                </div>
-
-                <div id="propsPanel" class="hidden">
-                    <div class="flex items-center justify-between mb-6">
-                        <h3 class="text-xs font-black text-gray-400 uppercase tracking-widest">تعديل العنصر</h3>
-                        <span class="text-[9px] bg-blue-600/20 text-blue-500 px-2 py-0.5 rounded" id="objTypeDisplay">TEXT</span>
-                    </div>
-
-                    <div class="prop-card">
-                        <label class="text-[10px] text-gray-500 block mb-2 uppercase">اللون الرئيسي</label>
-                        <input type="color" id="objFill" class="w-full h-8 bg-transparent cursor-pointer">
-                    </div>
-
-                    <div class="prop-card">
-                        <label class="text-[10px] text-gray-500 block mb-2 uppercase">الشفافية (Opacity)</label>
-                        <input type="range" id="objOpacity" min="0" max="1" step="0.01">
-                    </div>
-
-                    <div id="imageFilters" class="hidden animate__animated animate__fadeIn">
-                        <h4 class="text-[10px] text-gray-500 uppercase font-black mb-3">فلاتر احترافية</h4>
-                        <div class="grid grid-cols-2 gap-2 mb-4 font-mono text-[8px]">
-                            <button onclick="applyFilter('Grayscale')" class="bg-white/5 py-2 rounded hover:bg-blue-600 transition">B&W</button>
-                            <button onclick="applyFilter('Sepia')" class="bg-white/5 py-2 rounded hover:bg-blue-600 transition">SEPIA</button>
-                            <button onclick="applyFilter('Invert')" class="bg-white/5 py-2 rounded hover:bg-blue-600 transition">INVERT</button>
-                            <button onclick="applyFilter('Pixelate')" class="bg-white/5 py-2 rounded hover:bg-blue-600 transition">PIXEL</button>
-                        </div>
-                    </div>
-
-                    <div id="textControls" class="hidden animate__animated animate__fadeIn">
-                        <div class="prop-card">
-                            <label class="text-[10px] text-gray-500 block mb-2 uppercase">حجم الخط</label>
-                            <input type="number" id="objFontSize" class="w-full bg-black border border-white/10 rounded p-2 text-xs">
-                        </div>
+            <div class="tab-body">
+                <div id="property-editor" class="prop-editor empty">
+                    <div class="empty-state">
+                        <i class="fas fa-mouse-pointer"></i>
+                        <p>حدد عنصراً لتعديله</p>
                     </div>
                 </div>
-            </div>
 
-            <div class="h-64 border-t border-white/5 bg-[#080808] p-4">
-                <h3 class="text-[10px] font-black text-gray-500 uppercase mb-4 flex justify-between">
-                    نظام الطبقات <span class="text-blue-500" id="layerCountDisplay">0</span>
-                </h3>
-                <div id="layerList" class="overflow-y-auto h-44 scrollbar-hide">
+                <div id="layers-list" class="layers-stack hidden">
                     </div>
             </div>
         </aside>
 
+    </main>
+
+    <div id="export-modal" class="modal-overlay hidden">
+        <div class="modal-content animate__animated animate__zoomIn">
+            <h3>تصدير المشروع النهائي</h3>
+            <p>اختر الصيغة والجودة المناسبة لتصميمك</p>
+            <div class="export-options">
+                <button onclick="doExport('png')">PNG (شفاف)</button>
+                <button onclick="doExport('jpg')">JPG (عالي الجودة)</button>
+                <button onclick="doExport('json')">ملف مشروع (للتعديل لاحقاً)</button>
+            </div>
+            <button class="close-modal" onclick="closeModal()">إلغاء</button>
+        </div>
     </div>
 
-    <script>
-        // --- 1. CONFIGURATION ---
-        const canvas = new fabric.Canvas('c', {
-            width: 800, height: 600,
-            backgroundColor: '#ffffff',
-            preserveObjectStacking: true,
-            fireRightClick: true
-        });
-
-        // تخصيص مقابض التحكم الاحترافية
-        fabric.Object.prototype.set({
-            cornerColor: '#3b82f6', cornerStyle: 'circle', cornerSize: 10,
-            transparentCorners: false, borderColor: '#3b82f6', padding: 5
-        });
-
-        // --- 2. UI HANDLERS ---
-        function showTab(tabName) {
-            document.querySelectorAll('.tab-content').forEach(el => el.classList.add('hidden'));
-            document.querySelectorAll('.sidebar-item').forEach(el => el.classList.remove('active'));
-            document.getElementById('tab-' + tabName).classList.remove('hidden');
-            document.getElementById('tab-btn-' + tabName).classList.add('active');
-        }
-
-        // --- 3. CORE FUNCTIONS ---
-        function addText(type) {
-            const t = new fabric.IText(type === 'heading' ? 'عنوان عريض' : 'اكتب نصك هنا...', {
-                left: 100, top: 100, fontSize: type === 'heading' ? 60 : 25,
-                fontFamily: 'Tajawal', fontWeight: type === 'heading' ? '900' : 'normal',
-                fill: '#1a1a1a'
-            });
-            canvas.add(t); canvas.setActiveObject(t); renderLayers();
-        }
-
-        function addRect() {
-            const r = new fabric.Rect({ width: 150, height: 150, fill: '#3b82f6', left: 100, top: 100, rx: 15, ry: 15 });
-            canvas.add(r); canvas.setActiveObject(r); renderLayers();
-        }
-
-        function addCircle() {
-            const c = new fabric.Circle({ radius: 75, fill: '#10b981', left: 100, top: 100 });
-            canvas.add(c); canvas.setActiveObject(c); renderLayers();
-        }
-
-        function addStar() {
-            const s = new fabric.Path('M 50 0 L 61 35 L 98 35 L 68 57 L 79 91 L 50 70 L 21 91 L 32 57 L 2 35 L 39 35 Z', {
-                fill: '#facc15', left: 100, top: 100, scaleX: 1.5, scaleY: 1.5
-            });
-            canvas.add(s); canvas.setActiveObject(s); renderLayers();
-        }
-
-        // --- 4. AI SYSTEM ---
-        async function generateAI() {
-            const prompt = document.getElementById('aiPrompt').value;
-            if(!prompt) return swal("خطأ", "اكتب وصفاً أولاً يا سعود!", "error");
-            
-            const btn = document.getElementById('aiBtn');
-            btn.innerHTML = '<i class="fas fa-cog fa-spin mr-2"></i> جاري التوليد سحرياً...';
-            btn.disabled = true;
-
-            const url = `https://source.unsplash.com/featured/1000x1000/?${encodeURIComponent(prompt)}&sig=${Math.random()}`;
-            
-            fabric.Image.fromURL(url, (img) => {
-                img.scaleToWidth(500);
-                canvas.add(img); canvas.setActiveObject(img);
-                btn.innerHTML = 'توليد وإضافة للوحة';
-                btn.disabled = false;
-                renderLayers();
-            }, { crossOrigin: 'anonymous' });
-        }
-
-        // --- 5. DRAWING SYSTEM ---
-        function toggleDrawing() {
-            canvas.isDrawingMode = !canvas.isDrawingMode;
-            const btn = document.getElementById('drawingState');
-            if(canvas.isDrawingMode) {
-                btn.innerText = "تعطيل الرسم"; btn.classList.replace('bg-blue-600', 'bg-red-600');
-                canvas.freeDrawingBrush = new fabric.PencilBrush(canvas);
-                canvas.freeDrawingBrush.width = parseInt(document.getElementById('brushSize').value);
-                canvas.freeDrawingBrush.color = document.getElementById('brushColor').value;
-            } else {
-                btn.innerText = "تفعيل الرسم"; btn.classList.replace('bg-red-600', 'bg-blue-600');
-            }
-        }
-
-        document.getElementById('brushSize').oninput = function() {
-            document.getElementById('brushSizeVal').innerText = this.value;
-            if(canvas.freeDrawingBrush) canvas.freeDrawingBrush.width = parseInt(this.value);
-        }
-
-        // --- 6. PROPERTIES ENGINE ---
-        canvas.on('selection:created', updateProps);
-        canvas.on('selection:updated', updateProps);
-        canvas.on('selection:cleared', () => {
-            document.getElementById('propsPanel').classList.add('hidden');
-            document.getElementById('noSelection').classList.remove('hidden');
-        });
-
-        function updateProps() {
-            const obj = canvas.getActiveObject();
-            if(!obj) return;
-
-            document.getElementById('propsPanel').classList.remove('hidden');
-            document.getElementById('noSelection').classList.add('hidden');
-            document.getElementById('objTypeDisplay').innerText = obj.type.toUpperCase();
-            
-            if(obj.fill && typeof obj.fill === 'string' && obj.fill.startsWith('#')) 
-                document.getElementById('objFill').value = obj.fill;
-            
-            document.getElementById('objOpacity').value = obj.opacity;
-            
-            // Show/Hide specific controls
-            document.getElementById('imageFilters').style.display = obj.type === 'image' ? 'block' : 'none';
-            document.getElementById('textControls').style.display = obj.type.includes('text') ? 'block' : 'none';
-            
-            if(obj.type.includes('text')) document.getElementById('objFontSize').value = obj.fontSize;
-        }
-
-        document.getElementById('objFill').oninput = function() { canvas.getActiveObject().set('fill', this.value); canvas.renderAll(); }
-        document.getElementById('objOpacity').oninput = function() { canvas.getActiveObject().set('opacity', parseFloat(this.value)); canvas.renderAll(); }
-        document.getElementById('objFontSize').oninput = function() { canvas.getActiveObject().set('fontSize', parseInt(this.value)); canvas.renderAll(); }
-
-        // --- 7. FILTER SYSTEM ---
-        function applyFilter(name) {
-            const obj = canvas.getActiveObject();
-            if(!obj || obj.type !== 'image') return;
-            const filter = new fabric.Image.filters[name]();
-            obj.filters.push(filter);
-            obj.applyFilters();
-            canvas.renderAll();
-        }
-
-        // --- 8. LAYER MANAGER ---
-        function renderLayers() {
-            const list = document.getElementById('layerList');
-            list.innerHTML = '';
-            const objects = canvas.getObjects().reverse();
-            document.getElementById('layerCountDisplay').innerText = objects.length;
-
-            objects.forEach((obj, index) => {
-                const item = document.createElement('div');
-                item.className = 'layer-item';
-                item.innerHTML = `
-                    <div class="flex items-center gap-2">
-                        <span class="text-gray-600">#${objects.length - index}</span>
-                        <span class="font-bold uppercase tracking-widest">${obj.type}</span>
-                    </div>
-                    <div class="flex gap-2">
-                        <button onclick="canvas.setActiveObject(canvas.item(${objects.length - 1 - index})); canvas.renderAll();" class="text-blue-500"><i class="fas fa-eye"></i></button>
-                    </div>
-                `;
-                list.appendChild(item);
-            });
-        }
-        canvas.on('object:added', renderLayers);
-        canvas.on('object:removed', renderLayers);
-
-        // --- 9. UTILS ---
-        function setCanvasSize(w, h) {
-            canvas.setWidth(w); canvas.setHeight(h);
-            canvas.centerObject(canvas.getActiveObject());
-            canvas.renderAll();
-        }
-
-        function deleteObject() { canvas.remove(canvas.getActiveObject()); canvas.discardActiveObject(); }
-        
-        function downloadPNG() {
-            canvas.discardActiveObject(); canvas.renderAll();
-            const link = document.createElement('a');
-            link.download = `SAUD_OS_DESIGN_${Date.now()}.png`;
-            link.href = canvas.toDataURL({ format: 'png', quality: 1, multiplier: 2 });
-            link.click();
-        }
-
-        // Keyboard Shortcuts
-        window.addEventListener('keydown', (e) => {
-            if(e.key === 'Delete') deleteObject();
-            if(e.ctrlKey && e.key === 'c') canvas.getActiveObject()?.clone(c => _clipboard = c);
-            if(e.ctrlKey && e.key === 'v') { /* Paste logic */ }
-        });
-
-        // Close Loader
-        setTimeout(() => { document.getElementById('loader').style.display = 'none'; }, 2000);
-        
-        // Handle File Upload
-        document.getElementById('mainUpload').onchange = function(e) {
-            const reader = new FileReader();
-            reader.onload = (f) => fabric.Image.fromURL(f.target.result, img => { img.scaleToWidth(400); canvas.add(img); canvas.setActiveObject(img); });
-            reader.readAsDataURL(e.target.files[0]);
-        };
-    </script>
+    <script src="script.js"></script>
 </body>
 </html>
