@@ -1,0 +1,275 @@
+/* SMART DESIGNER PRO - MASTER STYLESHEET */
+:root {
+    --bg-black: #050505;
+    --panel-bg: #0d0d0d;
+    --accent-marble: #f5f5f7; /* أبيض رخامي بلمسة رمادية */
+    --accent-blue: #3b82f6;
+    --border-color: rgba(255, 255, 255, 0.05);
+    --text-main: #e5e7eb;
+    --text-dim: #6b7280;
+    --transition-fast: 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Tajawal', sans-serif;
+    background-color: var(--bg-black);
+    color: var(--text-main);
+    overflow: hidden;
+}
+
+/* --- Header Section --- */
+.main-header {
+    height: 65px;
+    background: var(--panel-bg);
+    border-bottom: 1px solid var(--border-color);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 25px;
+    z-index: 1000;
+}
+
+.logo-section {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+}
+
+.engine-logo {
+    width: 38px;
+    height: 38px;
+    background: var(--accent-marble);
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: black;
+    font-size: 1.2rem;
+    box-shadow: 0 0 20px rgba(255,255,255,0.1);
+}
+
+.brand-main {
+    font-family: 'Orbitron', sans-serif;
+    font-weight: 900;
+    letter-spacing: -1px;
+    font-size: 1.2rem;
+}
+
+.brand-sub {
+    color: var(--text-dim);
+    font-size: 0.8rem;
+    font-weight: bold;
+}
+
+/* --- Layout Grid --- */
+.studio-container {
+    display: grid;
+    grid-template-columns: 80px 320px 1fr 300px;
+    height: calc(100vh - 65px);
+}
+
+/* --- Column 1: Toolbar --- */
+.main-toolbar {
+    background: #000;
+    border-left: 1px solid var(--border-color);
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    padding: 20px 0;
+}
+
+.tool-nav {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.nav-item {
+    width: 100%;
+    padding: 15px 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 8px;
+    color: var(--text-dim);
+    border-left: 3px solid transparent;
+    transition: var(--transition-fast);
+    background: transparent;
+    border-right: none;
+    cursor: pointer;
+}
+
+.nav-item i { font-size: 1.3rem; }
+.nav-item span { font-size: 0.65rem; font-weight: bold; text-transform: uppercase; }
+
+.nav-item:hover, .nav-item.active {
+    color: var(--accent-marble);
+    background: rgba(255,255,255,0.03);
+}
+
+.nav-item.active {
+    border-left-color: var(--accent-marble);
+}
+
+/* --- Column 2: Control Panel --- */
+.control-panel {
+    background: var(--panel-bg);
+    border-left: 1px solid var(--border-color);
+    padding: 30px;
+    overflow-y: auto;
+}
+
+.panel-header {
+    font-size: 0.7rem;
+    text-transform: uppercase;
+    letter-spacing: 3px;
+    color: var(--text-dim);
+    margin-bottom: 25px;
+    border-bottom: 1px solid var(--border-color);
+    padding-bottom: 10px;
+}
+
+.ai-box textarea {
+    width: 100%;
+    background: #000;
+    border: 1px solid var(--border-color);
+    border-radius: 12px;
+    padding: 15px;
+    color: white;
+    font-size: 0.85rem;
+    resize: none;
+    height: 120px;
+    margin-bottom: 15px;
+    outline: none;
+    transition: var(--transition-fast);
+}
+
+.ai-box textarea:focus {
+    border-color: var(--accent-marble);
+}
+
+.ai-execute {
+    width: 100%;
+    background: var(--accent-marble);
+    color: black;
+    padding: 15px;
+    border-radius: 12px;
+    font-weight: 900;
+    font-size: 0.8rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    cursor: pointer;
+    transition: var(--transition-fast);
+}
+
+.ai-execute:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 10px 20px rgba(0,0,0,0.3);
+}
+
+/* --- Column 3: Canvas Viewport --- */
+.canvas-viewport {
+    background: #0f0f0f;
+    display: flex;
+    flex-direction: column;
+    position: relative;
+    background-image: radial-gradient(#222 1px, transparent 1px);
+    background-size: 40px 40px;
+}
+
+.canvas-inner {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: auto;
+    padding: 50px;
+}
+
+canvas {
+    background: white;
+    box-shadow: 0 40px 100px rgba(0,0,0,0.5);
+    border-radius: 4px;
+}
+
+.canvas-footer {
+    height: 40px;
+    background: #000;
+    border-top: 1px solid var(--border-color);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 20px;
+    font-size: 0.7rem;
+    color: var(--text-dim);
+}
+
+/* --- Column 4: Layers/Properties --- */
+.layers-panel {
+    background: var(--panel-bg);
+    border-right: 1px solid var(--border-color);
+}
+
+.tabs-header {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    height: 50px;
+    border-bottom: 1px solid var(--border-color);
+}
+
+.tab-btn {
+    background: transparent;
+    color: var(--text-dim);
+    font-weight: bold;
+    font-size: 0.75rem;
+    cursor: pointer;
+    border: none;
+}
+
+.tab-btn.active {
+    color: var(--accent-marble);
+    border-bottom: 2px solid var(--accent-marble);
+}
+
+.prop-editor {
+    padding: 25px;
+}
+
+.empty-state {
+    text-align: center;
+    padding-top: 100px;
+    opacity: 0.2;
+}
+
+.empty-state i { font-size: 3rem; margin-bottom: 15px; }
+
+/* --- Modals & Buttons --- */
+.btn-primary {
+    background: var(--accent-marble);
+    color: black;
+    padding: 10px 20px;
+    border-radius: 8px;
+    font-weight: bold;
+    font-size: 0.8rem;
+    transition: var(--transition-fast);
+}
+
+.ai-glow {
+    box-shadow: 0 0 15px rgba(255,255,255,0.1);
+    animation: glow 3s infinite alternate;
+}
+
+@keyframes glow {
+    from { box-shadow: 0 0 5px rgba(255,255,255,0.1); }
+    to { box-shadow: 0 0 20px rgba(255,255,255,0.3); }
+}
+
+.hidden { display: none !important; }
